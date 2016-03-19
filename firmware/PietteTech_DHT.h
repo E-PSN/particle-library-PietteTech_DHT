@@ -1,6 +1,6 @@
 /*
  * FILE:        PietteTech_DHT.h
- * VERSION:     0.2
+ * VERSION:     0.3
  * PURPOSE:     Spark Interrupt driven lib for DHT sensors
  * LICENSE:     GPL v3 (http://www.gnu.org/licenses/gpl.html)
  *
@@ -27,9 +27,7 @@
 
 #include "application.h"
 
-#define DHTLIB_VERSION "0.2"
-
-#define NOT_CONNECTED                       255
+#define DHTLIB_VERSION "0.3"
 
 // device types
 #define DHT11                               11
@@ -55,8 +53,8 @@
 
 #define DHT_CHECK_STATE                         \
         if(_state == STOPPED)                   \
-            return _status;			            \
-        else if(_state != ACQUIRED)		        \
+            return _status;			\
+        else if(_state != ACQUIRED)		\
             return DHTLIB_ERROR_ACQUIRING;      \
         if(_convert) convert();
 
@@ -67,7 +65,7 @@ public:
     void begin(uint8_t sigPin, uint8_t dht_type, void (*isrCallback_wrapper)());
     void isrCallback();
     int acquire();
-    int acquireAndWait();
+    int acquireAndWait(uint32_t);
     float getCelsius();
     float getFahrenheit();
     float getKelvin();
@@ -81,15 +79,15 @@ public:
 #if defined(DHT_DEBUG_TIMING)
     volatile uint8_t _edges[41];
 #endif
-    volatile uint8_t _bits[5];    
-    
+
 private:
     void (*isrCallback_wrapper)(void);
     void convert();
-    
+
     enum states{RESPONSE=0,DATA=1,ACQUIRED=2,STOPPED=3,ACQUIRING=4};
     volatile states _state;
     volatile int _status;
+    volatile uint8_t _bits[5];
     volatile uint8_t _cnt;
     volatile uint8_t _idx;
     volatile unsigned long _us;
@@ -101,7 +99,6 @@ private:
     int _type;
     unsigned long _lastreadtime;
     bool _firstreading;
-    const float MIN_FLOAT=-4294799872.00;
     float _hum;
     float _temp;
 };
